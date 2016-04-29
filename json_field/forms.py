@@ -3,6 +3,8 @@ try:
 except ImportError:  # python < 2.6
     from django.utils import simplejson as json
 from django.forms import fields, util
+from django.core.exceptions import ValidationError
+from django.forms import fields
 
 import datetime
 from decimal import Decimal
@@ -45,9 +47,9 @@ class JSONFormField(fields.Field):
             try:
                 value = json.dumps(eval(value, json_globals, json_locals), **self.encoder_kwargs)
             except Exception as e: # eval can throw many different errors
-                raise util.ValidationError(str(e))
+                raise ValidationError(str(e))
 
         try:
             return json.loads(value, **self.decoder_kwargs)
         except ValueError as e:
-            raise util.ValidationError(str(e))
+            raise ValidationError(str(e))
